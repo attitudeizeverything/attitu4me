@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.yoho.model.ModelSignage"
+	table="access" catalog="yoho">
+
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="access_type" type="string">
+            <column name="ACCESS_TYPE" length="100" not-null="false" />
+        </property>
+        <property name="is_active" type="int">
+            <column name="IS_ACTIVE" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
