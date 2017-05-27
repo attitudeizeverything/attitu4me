@@ -1,0 +1,111 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android)
+
+Name: res/layout/cordova_layout.xml
+SHA1-Digest: jeJs8FEKzbWsvHk/3wZGV9km9I0=
+
+Name: AndroidManifest.xml
+SHA1-Digest: Hfe117wBpUqmuvlvo4164ply50Q=
+
+Name: res/drawable-ldpi-v4/icon.png
+SHA1-Digest: HX3Rn3Ln3GZSb8tvryO2EGRlEs0=
+
+Name: res/drawable-hdpi-v4/ic_launcher.png
+SHA1-Digest: DlsM8bTSQOyHUtHWIPwnDJGSww8=
+
+Name: res/drawable-hdpi-v4/icon.png
+SHA1-Digest: HX3Rn3Ln3GZSb8tvryO2EGRlEs0=
+
+Name: res/drawable-mdpi-v4/network.png
+SHA1-Digest: 8U672m0/GK8Bzz+nn5yjvtM/7Os=
+
+Name: res/xml/config.xml
+SHA1-Digest: +oduHXTL92H0ZRyf3OmQZ45NO4o=
+
+Name: res/drawable-mdpi-v4/ic_launcher.png
+SHA1-Digest: XYwi+SUEhZDBE96nYbr4jfF1p+Y=
+
+Name: res/menu/main.xml
+SHA1-Digest: Fd3somKGCQNSWjCPPZXylBJEoCo=
+
+Name: res/drawable/backgrnd.jpg
+SHA1-Digest: E44LlHdUzQ7MkilEhIlNbKOj1Lw=
+
+Name: assets/activity_pl2303_hxdsimple_test.xml
+SHA1-Digest: GMLIldSWWqymjbFrRcbZVt51iWw=
+
+Name: res/drawable-hdpi-v4/round_button.xml
+SHA1-Digest: FW7aG4kIblXeCX1/8m9W6HteWl0=
+
+Name: res/drawable-mdpi-v4/backgrnd.png
+SHA1-Digest: ovwmuNM8qcjnPlsArJ8kDE+3hvo=
+
+Name: assets/xwalk-command-line
+SHA1-Digest: jRWzdtpZWew3NNVImrE5YRmAfwI=
+
+Name: res/drawable-mdpi-v4/refresh.png
+SHA1-Digest: 0lA5W4yh1sCYENHfp/VosdYhsc0=
+
+Name: res/drawable-hdpi-v4/my_button_bg.xml
+SHA1-Digest: uDGORoUDVfMICt5ZaCh7klAWSeo=
+
+Name: res/drawable-xxhdpi-v4/ic_launcher.png
+SHA1-Digest: Ln3keLdAeDTlThkR2VUMNNzklzA=
+
+Name: res/drawable/green.png
+SHA1-Digest: QuhqYFc9895qRKIefc/hHq0ffeY=
+
+Name: res/drawable/red.png
+SHA1-Digest: eZRu8mVyphrmvLkYOrNr9gFvSe0=
+
+Name: classes.jar
+SHA1-Digest: 3pGLcPKtiRztE2/w6pD4c2hs2Bg=
+
+Name: res/drawable-mdpi-v4/debug.png
+SHA1-Digest: jONJYw2jY9h9CLgVPC2DtN5MF7I=
+
+Name: res/drawable/icon.png
+SHA1-Digest: HX3Rn3Ln3GZSb8tvryO2EGRlEs0=
+
+Name: jcifs/util/mime.map
+SHA1-Digest: 2vhR14b54oWqwDXW5QjiLhKH6LU=
+
+Name: res/drawable/pickcel_logo.png
+SHA1-Digest: Dc0XnAYjn6pSO0aMq3WmcfieCag=
+
+Name: res/drawable-mdpi-v4/usb.png
+SHA1-Digest: 17xXpD5qpxH8bUbhzAYCueZXJPA=
+
+Name: res/layout/control_layout.xml
+SHA1-Digest: VdOkCUhDFZmkgOm7pYo7z+9dJv0=
+
+Name: jcifs/http/ne.css
+SHA1-Digest: MRR9Qopwy3aO0SIaeetmis7iOSA=
+
+Name: res/raw/lbpcascade_frontalface.xml
+SHA1-Digest: UuvTEZEYFvGhx1yDaNXmgNslDOU=
+
+Name: res/drawable-xhdpi-v4/icon.png
+SHA1-Digest: HX3Rn3Ln3GZSb8tvryO2EGRlEs0=
+
+Name: org/apache/http/entity/mime/version.properties
+SHA1-Digest: bid50ZgMS/gQ5ZecVJVZXdGpiMI=
+
+Name: res/layout/youtube_view.xml
+SHA1-Digest: qZOzjxPfUnX7lb5sbruc3KTqGbY=
+
+Name: res/drawable-xhdpi-v4/ic_launcher.png
+SHA1-Digest: fQEEvo44EYebjvXJje0O9rinoQI=
+
+Name: res/drawable-mdpi-v4/settings.png
+SHA1-Digest: 9axrTxlOUka38Z6TttjSUCaEQXs=
+
+Name: resources.arsc
+SHA1-Digest: oN7vGzNaoff8X7FfER8nqt7oWOc=
+
+Name: classes.dex
+SHA1-Digest: H+nG9gg5pMngQs0UocGUcSpN85c=
+
+Name: res/layout/new_layout.xml
+SHA1-Digest: JAOoG73JEwU+tO0D/UjjlnOC4Oc=
+

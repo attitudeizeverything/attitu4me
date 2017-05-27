@@ -1,0 +1,10 @@
+package com.mstar.android.tvapi.common.vo;
+
+public enum EnumAuidoCaptureDeviceType {
+    E_CAPTURE_DEVICE_TYPE_DEVICE0,
+    E_CAPTURE_DEVICE_TYPE_DEVICE1,
+    E_CAPTURE_DEVICE_TYPE_DEVICE2,
+    E_CAPTURE_DEVICE_TYPE_DEVICE3,
+    E_CAPTURE_DEVICE_TYPE_DEVICE4,
+    E_CAPTURE_DEVICE_TYPE_DEVICE5
+}
