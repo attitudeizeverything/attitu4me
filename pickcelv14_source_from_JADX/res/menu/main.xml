@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu>
-    <item android:icon="@drawable/refresh" android:id="@id/action_refresh" android:title="Refresh" android:showAsAction="1" />
-    <item android:icon="@drawable/usb" android:id="@id/action_debug" android:title="Enable debug" android:showAsAction="1" />
-    <item android:icon="@drawable/settings" android:id="@id/action_setting" android:title="Set time" android:showAsAction="1" />
-</menu>
