@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/okhttp-1.2.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/cordova-2.4.0.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/jcifs-1.3.17.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/RootTools.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/jar_files/nanohttpd-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/jar_files/nanohttpd-webserver-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/httpclient-4.0.3 (1).jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/httpcore-4.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/httpmime-4.3.jar"/>
+	<classpathentry kind="lib" path="/Users/yathiraj.mv/Downloads/pickcelv14_source_from_JADX/YouTubeAndroidPlayerApi.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
