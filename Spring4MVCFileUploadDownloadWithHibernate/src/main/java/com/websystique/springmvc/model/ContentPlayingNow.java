@@ -39,6 +39,9 @@ private String delayUnit;
 
 @Column(name = "IS_ACTIVE")
 private Integer isActive;
+
+@Column(name = "is_deleted")
+private Integer isDeleted;
 	
 	
 	public long getId() {
@@ -103,6 +106,14 @@ private Integer isActive;
 
 	public void setIsActive(Integer isActive) {
 		this.isActive = isActive;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	@Override

@@ -17,8 +17,9 @@ public class ContentPlayingNowDaoImpl extends AbstractDao<Integer, ContentPlayin
 	@SuppressWarnings("unchecked")
 	public List<ContentPlayingNow> findByDeviceId(int deviceId){
 		Criteria crit = createEntityCriteria();
-		Criteria userCriteria = crit.createCriteria("device");
-		userCriteria.add(Restrictions.eq("id", deviceId)).addOrder(Order.asc("startTime"));
+		Criteria userCriteria = crit.add(Restrictions.ne("isDeleted",1)).createCriteria("device");
+		userCriteria.add(Restrictions.eq("id", deviceId));
+		//crit.add(arg0)
 		return (List<ContentPlayingNow>)crit.list();
 	}
 
