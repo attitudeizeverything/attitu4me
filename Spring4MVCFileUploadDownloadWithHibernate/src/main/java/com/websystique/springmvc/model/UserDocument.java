@@ -29,7 +29,7 @@ public class UserDocument {
 	private String type;
 	
 	@Lob @Basic(fetch = FetchType.LAZY)
-	@Column(name="content", nullable=false)
+	@Column(name="content", nullable=true)
 	private byte[] content;
 
 	@ManyToOne(optional = false)
@@ -41,6 +41,9 @@ public class UserDocument {
 	
 	@Column(name = "unique_identifier")
 	private String uniqueIdentifier;
+	
+	@Column(name = "play_group")
+	private Integer playGroup;
 	
 	
 	public Integer getId() {
@@ -105,6 +108,14 @@ public class UserDocument {
 
 	public void setUniqueIdentifier(String uniqueIdentifier) {
 		this.uniqueIdentifier = uniqueIdentifier;
+	}
+
+	public Integer getPlayGroup() {
+		return playGroup;
+	}
+
+	public void setPlayGroup(Integer playGroup) {
+		this.playGroup = playGroup;
 	}
 
 	@Override

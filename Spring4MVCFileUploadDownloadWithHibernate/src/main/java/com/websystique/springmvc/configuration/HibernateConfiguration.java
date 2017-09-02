@@ -49,6 +49,9 @@ public class HibernateConfiguration {
         properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
         properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
         properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
+        properties.put("c3p0.timeout",environment.getRequiredProperty("c3p0.timeout"));
+        properties.put("c3p0.idle_test_period",environment.getRequiredProperty("c3p0.idle_test_period"));
+        properties.put("hibernate.hbm2ddl.auto",environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
         return properties;        
     }
     

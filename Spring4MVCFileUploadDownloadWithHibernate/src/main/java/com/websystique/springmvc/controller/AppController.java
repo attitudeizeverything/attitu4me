@@ -1,5 +1,6 @@
 package com.websystique.springmvc.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -19,16 +20,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.websystique.springmvc.model.ContentPlayingNow;
 import com.websystique.springmvc.model.FileBucket;
 import com.websystique.springmvc.model.User;
 import com.websystique.springmvc.model.UserDocument;
-import com.websystique.springmvc.service.ContentPlayingNowService;
 import com.websystique.springmvc.service.UserDocumentService;
 import com.websystique.springmvc.service.UserService;
+import com.websystique.springmvc.util.EncryptUtils;
 import com.websystique.springmvc.util.FileValidator;
 
 
@@ -42,9 +41,6 @@ public class AppController {
 	
 	@Autowired
 	UserDocumentService userDocumentService;
-	
-	@Autowired
-	ContentPlayingNowService contentPlayingNowService;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -206,32 +202,29 @@ public class AppController {
 			
 			User user = userService.findById(userId);
 			model.addAttribute("user", user);
-
+			
 			saveDocument(fileBucket, user);
 
 			return "redirect:/add-document-"+userId;
 		}
 	}
 	
-	@RequestMapping(value = "/ads", method = RequestMethod.POST,headers="Accept=application/json")
-	public void getFile(@RequestParam (name="id") String id){
-		List<ContentPlayingNow> cont = contentPlayingNowService.findByDeviceId(Integer.parseInt(id));
-		for (ContentPlayingNow contentPlayingNow : cont) {
-		System.out.println(contentPlayingNow.getStartTime());	
-		}
-	}
 	
 	private void saveDocument(FileBucket fileBucket, User user) throws IOException{
 		
 		UserDocument document = new UserDocument();
 		
 		MultipartFile multipartFile = fileBucket.getFile();
-		
+		multipartFile.transferTo(new File("F:\\yoho\\"+multipartFile.getOriginalFilename()));
+		//fileBucket.setFile(null);
 		document.setName(multipartFile.getOriginalFilename());
-		document.setDescription(fileBucket.getDescription());
+		document.setDescription("Please call 9945672422");
 		document.setType(multipartFile.getContentType());
-		document.setContent(multipartFile.getBytes());
+		document.setContent(null);
 		document.setUser(user);
+		document.setFileLocation("F:\\yoho\\"+multipartFile.getOriginalFilename());
+		document.setUniqueIdentifier(EncryptUtils.base64encode(multipartFile.getOriginalFilename()));
+		document.setPlayGroup(1);
 		userDocumentService.saveDocument(document);
 	}
 	
