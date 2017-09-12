@@ -1,4 +1,4 @@
-package com.websystique.springmvc.service;
+package com.websystique.springmvc.service.impl;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.websystique.springmvc.dao.UserDocumentDao;
 import com.websystique.springmvc.model.UserDocument;
+import com.websystique.springmvc.service.UserDocumentService;
 
 @Service("userDocumentService")
 @Transactional
