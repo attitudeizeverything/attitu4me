@@ -24,6 +24,9 @@ public class DeviceCategory {
 	@Column(name = "NUMBER_OF_TIMES_PLAYED")
 	private int numberOfTimesPlayed;
 	
+	@Column(name = "price")
+	private double price;
+	
 	public int getId() {
 		return id;
 	}
@@ -48,10 +51,16 @@ public class DeviceCategory {
 	public void setNumberOffTimesPlayed(int numberOffTimesPlayed) {
 		this.numberOfTimesPlayed = numberOffTimesPlayed;
 	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
 	@Override
 	public String toString() {
-		return "Device_Category [id=" + id + ", category=" + category + ", secondsPlayed=" + secondsPlayed
-				+ ", numberOffTimesPlayed=" + numberOfTimesPlayed + "]";
+		return "DeviceCategory [id=" + id + ", category=" + category + ", secondsPlayed=" + secondsPlayed
+				+ ", numberOfTimesPlayed=" + numberOfTimesPlayed + ", price=" + price + "]";
 	}
 	
 }

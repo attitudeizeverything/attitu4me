@@ -1,5 +1,6 @@
 package com.websystique.springmvc.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -24,6 +25,11 @@ public class DeviceServiceImpl implements DeviceService{
 	@Override
 	public Device findDeviceById(int id) {
 		return devicesDao.findById(id);
+	}
+	
+	@Override
+	public List<Device> getPrice(ArrayList<Integer> deviceCategory) {
+		return devicesDao.getPrice(deviceCategory);
 	}
 	
 }

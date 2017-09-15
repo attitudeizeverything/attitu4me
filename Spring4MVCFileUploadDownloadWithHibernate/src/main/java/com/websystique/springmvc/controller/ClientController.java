@@ -1,6 +1,9 @@
 package com.websystique.springmvc.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,10 +21,13 @@ import com.websystique.springmvc.model.ContentPlayingNow;
 import com.websystique.springmvc.model.ContentRequest;
 import com.websystique.springmvc.model.Device;
 import com.websystique.springmvc.model.DeviceLocation;
+import com.websystique.springmvc.model.PriceRequest;
 import com.websystique.springmvc.model.UserDocument;
 import com.websystique.springmvc.service.ContentPlayingNowService;
+import com.websystique.springmvc.service.DeviceCategoryService;
 import com.websystique.springmvc.service.DeviceLocationService;
 import com.websystique.springmvc.service.DeviceService;
+import com.websystique.springmvc.service.PlayingPriceService;
 import com.websystique.springmvc.service.UserDocumentService;
 
 @RestController
@@ -38,6 +44,12 @@ public class ClientController {
 	
 	@Autowired
 	UserDocumentService userDocumentService;
+	
+	@Autowired
+	PlayingPriceService playingPriceService;
+	
+	@Autowired
+	DeviceCategoryService deviceCategoryService;
 	
 	@RequestMapping(value = "/ads", method = RequestMethod.POST,headers="Accept=application/json")
 	public AppResponse getFile(@RequestParam (name="id") String id){
@@ -87,6 +99,17 @@ public class ClientController {
 		 return "managedocuments";
 	}
 	
+	@RequestMapping(value = "/price", method = RequestMethod.POST,headers="Accept=application/json")
+	public Double getPrice(@RequestBody PriceRequest priceRequest){
+		List<Device> category= deviceService.getPrice(priceRequest.getDeviceId()); 
+		double price =0.0d;
+		System.out.println(category.size());
+		for (Device device : category) {
+			  price+=device.getDeviceCategory().getNumberOffTimesPlayed() * device.getDeviceCategory().getSecondsPlayed() * device.getDeviceCategory().getPrice();
+		}
+		return price*getWorkingDaysBetween(priceRequest.getStartDate(), priceRequest.getEndDate());
+	}
+	
 	private void saveContents(ContentRequest contentPlayingNow){
 		ContentPlayingNow now = new ContentPlayingNow();
 		Device device = deviceService.findDeviceById(contentPlayingNow.getDeviceId());
@@ -101,4 +124,35 @@ public class ClientController {
 		now.setUserDocument(document);
 		contentPlayingNowService.save(now);
 	}
+	
+	private int getWorkingDaysBetween(Date startDate, Date endDate) {
+	    int workingDays = 0;
+	    try
+	    {
+	      //Date start = sdf.parse(startdate);
+	      Calendar start = Calendar.getInstance();
+	      start.setTime(startDate);
+	      //Date end = sdf.parse(enddate);
+	      Calendar end = Calendar.getInstance();
+	      end.setTime(endDate);
+	      
+	      while(!start.after(end))//removed ; (semi-colon)
+	      {
+	        //int day = start.getDay();
+	        int day = start.get(Calendar.DAY_OF_WEEK);
+	        //if ((day != Calendar.SATURDAY) || (day != Calendar.SUNDAY)) if it's sunday, != to Saturday is true
+	        if ((day != Calendar.SATURDAY) && (day != Calendar.SUNDAY))
+	        workingDays++;
+	        //System.out.println(workingDays);//moved
+	        start.add(Calendar.DATE, 1);//removed comment tags
+	      }
+	    }
+	    catch(Exception e)
+	    {
+	      e.printStackTrace();
+	    }
+	    return workingDays;
+	}
+	
+	
 }
