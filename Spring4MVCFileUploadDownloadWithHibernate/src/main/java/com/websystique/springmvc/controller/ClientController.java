@@ -94,9 +94,9 @@ public class ClientController {
 	}
 	
 	@RequestMapping(value = "/saveContents", method = RequestMethod.POST,headers="Accept=application/json")
-	public String saveContent(@RequestBody ContentRequest contentPlayingNow){
-		 saveContents(contentPlayingNow);
-		 return "managedocuments";
+	public String saveContent(@RequestBody ContentRequest contentRequest){
+		 saveContents(contentRequest);
+		 return "Campaign Details Saved Succeffully!!";
 	}
 	
 	@RequestMapping(value = "/price", method = RequestMethod.POST,headers="Accept=application/json")
@@ -110,29 +110,29 @@ public class ClientController {
 		return price*getWorkingDaysBetween(priceRequest.getStartDate(), priceRequest.getEndDate());
 	}
 	
-	private void saveContents(ContentRequest contentPlayingNow){
-		ContentPlayingNow now = new ContentPlayingNow();
-		Device device = deviceService.findDeviceById(contentPlayingNow.getDeviceId());
-		System.out.println(device.getId());
-		System.out.println(device.getDeviceName());
-		UserDocument document = userDocumentService.findById(contentPlayingNow.getContnetId());
-		now.setDelay(4);
-		now.setDelayUnit("MIN");
-		now.setDevice(device);
-		now.setEndTime(new Date().toString());
-		now.setStartTime(new Date().toString());
-		now.setUserDocument(document);
-		contentPlayingNowService.save(now);
+	private void saveContents(ContentRequest contentRequest){
+		ContentPlayingNow now ;
+		for (Integer deviceId : contentRequest.getDeviceId()) {
+			now = new ContentPlayingNow();
+			Device device = deviceService.findDeviceById(deviceId);
+			UserDocument document = userDocumentService.findById(contentRequest.getContnetId());
+			now.setDelay(4);
+			now.setDelayUnit("MIN");
+			now.setDevice(device);
+			now.setEndTime(contentRequest.getEndDate().toString());
+			now.setStartTime(contentRequest.getStartDate().toString());
+			now.setCampaignPrice(contentRequest.getPrice());
+			now.setUserDocument(document);
+			contentPlayingNowService.save(now);
+		}
 	}
 	
 	private int getWorkingDaysBetween(Date startDate, Date endDate) {
 	    int workingDays = 0;
 	    try
 	    {
-	      //Date start = sdf.parse(startdate);
 	      Calendar start = Calendar.getInstance();
 	      start.setTime(startDate);
-	      //Date end = sdf.parse(enddate);
 	      Calendar end = Calendar.getInstance();
 	      end.setTime(endDate);
 	      

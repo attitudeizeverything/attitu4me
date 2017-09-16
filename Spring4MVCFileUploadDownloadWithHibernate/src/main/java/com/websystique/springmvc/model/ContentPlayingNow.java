@@ -37,6 +37,9 @@ private Integer delay;
 @Column(name = "DELAY_UNIT")
 private String delayUnit;
 
+@Column(name = "CAMPAIGN_PRICE")
+private Double campaignPrice;
+
 @Column(name = "IS_ACTIVE")
 private Integer isActive;
 
@@ -100,6 +103,14 @@ private Integer isDeleted;
 		this.delayUnit = delayUnit;
 	}
 	
+	public Double getCampaignPrice() {
+		return campaignPrice;
+	}
+
+	public void setCampaignPrice(Double campaignPrice) {
+		this.campaignPrice = campaignPrice;
+	}
+
 	public Integer getIsActive() {
 		return isActive;
 	}
