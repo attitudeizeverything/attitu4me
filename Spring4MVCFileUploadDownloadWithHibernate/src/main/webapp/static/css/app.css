@@ -40,3 +40,7 @@ body, .form-control{
 .custom-width {
     width: 80px !important;
 }
+
+.text{
+	border: 0;
+}

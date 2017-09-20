@@ -45,7 +45,9 @@ private Integer isActive;
 
 @Column(name = "is_deleted")
 private Integer isDeleted;
-	
+
+@Column(name = "group_id")
+private String groupId;
 	
 	public long getId() {
 		return id;
@@ -125,6 +127,14 @@ private Integer isDeleted;
 
 	public void setIsDeleted(Integer isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	@Override

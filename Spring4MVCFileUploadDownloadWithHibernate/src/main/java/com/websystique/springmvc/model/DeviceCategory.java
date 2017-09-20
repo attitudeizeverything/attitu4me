@@ -24,8 +24,11 @@ public class DeviceCategory {
 	@Column(name = "NUMBER_OF_TIMES_PLAYED")
 	private int numberOfTimesPlayed;
 	
-	@Column(name = "price")
+	@Column(name = "PRICE")
 	private double price;
+	
+	@Column(name = "WORKING_HOURS")
+	private int hours;
 	
 	public int getId() {
 		return id;
@@ -57,10 +60,16 @@ public class DeviceCategory {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	public int getHours() {
+		return hours;
+	}
+	public void setHours(int hours) {
+		this.hours = hours;
+	}
 	@Override
 	public String toString() {
 		return "DeviceCategory [id=" + id + ", category=" + category + ", secondsPlayed=" + secondsPlayed
-				+ ", numberOfTimesPlayed=" + numberOfTimesPlayed + ", price=" + price + "]";
+				+ ", numberOfTimesPlayed=" + numberOfTimesPlayed + ", price=" + price + ", hours=" + hours + "]";
 	}
 	
 }

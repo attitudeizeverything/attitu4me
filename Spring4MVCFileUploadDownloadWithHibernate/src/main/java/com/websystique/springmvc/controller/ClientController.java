@@ -20,6 +20,7 @@ import com.websystique.springmvc.model.CampaignResponse;
 import com.websystique.springmvc.model.ContentPlayingNow;
 import com.websystique.springmvc.model.ContentRequest;
 import com.websystique.springmvc.model.Device;
+import com.websystique.springmvc.model.DeviceCategory;
 import com.websystique.springmvc.model.DeviceLocation;
 import com.websystique.springmvc.model.PriceRequest;
 import com.websystique.springmvc.model.UserDocument;
@@ -29,6 +30,7 @@ import com.websystique.springmvc.service.DeviceLocationService;
 import com.websystique.springmvc.service.DeviceService;
 import com.websystique.springmvc.service.PlayingPriceService;
 import com.websystique.springmvc.service.UserDocumentService;
+import com.websystique.springmvc.util.EncryptUtils;
 
 @RestController
 public class ClientController {
@@ -116,13 +118,16 @@ public class ClientController {
 			now = new ContentPlayingNow();
 			Device device = deviceService.findDeviceById(deviceId);
 			UserDocument document = userDocumentService.findById(contentRequest.getContnetId());
-			now.setDelay(4);
-			now.setDelayUnit("MIN");
+			now.setDelay(slotBetweenCampaign(device.getDeviceCategory()));
+			now.setDelayUnit("SEC");
 			now.setDevice(device);
 			now.setEndTime(contentRequest.getEndDate().toString());
 			now.setStartTime(contentRequest.getStartDate().toString());
 			now.setCampaignPrice(contentRequest.getPrice());
 			now.setUserDocument(document);
+			now.setIsActive(1);
+			now.setIsDeleted(0);
+			now.setGroupId(EncryptUtils.base64encode(contentRequest.getEndDate().toString()+contentRequest.getStartDate().toString()+document.getName()));
 			contentPlayingNowService.save(now);
 		}
 	}
@@ -136,15 +141,14 @@ public class ClientController {
 	      Calendar end = Calendar.getInstance();
 	      end.setTime(endDate);
 	      
-	      while(!start.after(end))//removed ; (semi-colon)
+	      while(!start.after(end))
 	      {
 	        //int day = start.getDay();
 	        int day = start.get(Calendar.DAY_OF_WEEK);
 	        //if ((day != Calendar.SATURDAY) || (day != Calendar.SUNDAY)) if it's sunday, != to Saturday is true
 	        if ((day != Calendar.SATURDAY) && (day != Calendar.SUNDAY))
 	        workingDays++;
-	        //System.out.println(workingDays);//moved
-	        start.add(Calendar.DATE, 1);//removed comment tags
+	        start.add(Calendar.DATE, 1);
 	      }
 	    }
 	    catch(Exception e)
@@ -154,5 +158,20 @@ public class ClientController {
 	    return workingDays;
 	}
 	
+	private int slotBetweenCampaign(DeviceCategory category){
+		return (60/numberOfAdsPerDay(category))*60;
+	}
 	
+	private int numberOfAdsPerDay(DeviceCategory category){
+		int secPerDay=category.getHours()*60*60;
+		return secPerDay/(category.getNumberOffTimesPlayed()*category.getSecondsPlayed());
+	}
+	
+	private void setStartTime(DeviceCategory category){
+		
+	}
+	
+	private void getSlots(){
+		
+	}
 }

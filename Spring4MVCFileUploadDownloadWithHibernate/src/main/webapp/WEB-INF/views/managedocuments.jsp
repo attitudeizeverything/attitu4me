@@ -12,6 +12,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script type="text/javascript">
+         
          var numbers;
             function sayHello(id)
 			{       
@@ -31,7 +32,7 @@
          $("#myBtn").click(function(){
          $("#myModal").modal();
 		var mymodal=$('#myModal');
-		mymodal.find('.modal-body').text(numbers);
+		//mymodal.find('.modal-body').text(numbers);
 		});
 	});
 	<!--  submit json-->
@@ -62,10 +63,10 @@ function getDevices() {
         type: 'POST',
 		data:'',
         dataType: 'json',
-		success:function(response){ 
+		success:function(response){		                     							
                              for(var i=0;i<response.length;i++)
 							   {
-							   $('#devices').append($('<option id='+response[i].id+'>'+response[i].deviceLocation.devceLocationName+' - '+response[i].deviceName+'</option>'));
+							   $('#devices').append($('<option id='+response[i].id+'>'+response[i].deviceLocation.devceLocationName+' - '+response[i].deviceName+' - '+response[i].deviceCategory.category+'</option>'));
 							   //$('#image').html('<img src='+ response[i].deviceImageLocation+' width="42" height="42" />"');
 							   }
 							 console.log(response);
@@ -75,8 +76,15 @@ function getDevices() {
 
 function postJson() {
 	var scdate=document.getElementById('scdate');
+	var edate=document.getElementById('edate');
 	var did=document.getElementById('devices');
-	var markers = { "date": document.getElementById('scdate').value, "deviceId": did.options[did.selectedIndex].id,"contnetId":numbers};
+	var price=document.getElementById('price');
+	var deviceIds = $('#devices option:selected').map( function(i,el){
+    var result = [el.id];
+    //result[ el.id ] = $(el).val();
+    return result;	
+}).get();
+	var markers = { "startDate": document.getElementById('scdate').value,"endDate": document.getElementById('edate').value, "deviceId": deviceIds,"contnetId":numbers,"price":price.value};
 
     $.ajax({
         url: 'http://localhost:8080/Spring4MVCFileUploadDownloadWithHibernate/saveContents',
@@ -84,13 +92,56 @@ function postJson() {
 		contentType:'application/json',
 		data:JSON.stringify(markers),
         dataType: 'json',
-		success: function(data){alert(data);
+		success: function(data){$(function(e) {
+   // e.preventDefault();
+    // Coding
+    $('#myModal').modal('toggle'); //or  $('#IDModal').modal('hide');
+	$("#successModal").modal();
+		var mymodal1=$('#successModal');
+    return false;
+});
 		console.log(data);},
-        failure: function(errMsg) {alert(errMsg);
+        failure: function(e) {alert("sdfdsf");
 		console.log(data);}
     });
 }
+function getPrice() {
+	var scdate=document.getElementById('scdate');
+	var edate=document.getElementById('edate');
+	var did=document.getElementById('devices');
+	var deviceIds = $('#devices option:selected').map( function(i,el){
+    var result = [el.id];
+    //result[ el.id ] = $(el).val();
+    return result;	
+}).get();
+//console.log(y);
+	var markers = { "startDate": scdate.value,"endDate": edate.value, "deviceId": deviceIds};
+    $.ajax({
+        url: 'http://localhost:8080/Spring4MVCFileUploadDownloadWithHibernate/price',
+        type: 'POST',
+		contentType:'application/json',
+		data:JSON.stringify(markers),
+        dataType: 'json',
+		success:function(response){ 
+                                document.getElementById("price").value = response;
+							//console.log(response);
+                            }
+    });
+}
 
+// generic functions
+function todaysDate()
+{
+var now = new Date();
+
+var day = ("0" + now.getDate()).slice(-2);
+var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+
+$('#scdate').val(today);
+
+}
       </script>
   
     
@@ -133,7 +184,7 @@ function postJson() {
   
   <!-- Trigger the modal with a button -->
   <div>
-  <button type="button" class="btn btn-info btn-lg" id="myBtn" align="right">schedule Campaign</button>
+  <button type="button" class="btn btn-info btn-lg" id="myBtn" align="right" onclick="todaysDate();">schedule Campaign</button>
 </div>
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
@@ -145,13 +196,12 @@ function postJson() {
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">schedule Campaign</h4>
         </div>
-		<div>
-		<table cellspacing="10" border="0" width="100%">
+		<div class="tablecontainer">
+		<table cellspacing="10" border="0" width="100%" class="table table-hover">
   <tr>
     <th>City</th>
     <th>Places</th>
 	<th>Devices</th>
-	<th>DATE</th>
   </tr>
   <tr>
     <td><select id="ct" onChange="sendData();">
@@ -161,37 +211,39 @@ function postJson() {
 </select></td>
 <td> <select id="location" onChange="getDevices();">
 </select> </td>
-<td> <select id="devices"></select> </td>
-<td><input type="date" name="bdaytime" id="scdate"></td>
+<td> <select id="devices" multiple></select> </td>
+</tr><tr>
+<td><b>Start Date: </b><input type="date" name="startdate" id="scdate" onChange="getPrice();"></td>
+<td><b>End Date:</b> <input type="date" name="enddate" id="edate" onChange="getPrice();"></td>
+<td></td>
+</tr>
+<tr><td><b>Note :</b><i>Device Categoty - A will be played for 30 seconds 80times a day</i> </td>
+<td><i><b>Note :</b>	 Device Categoty - B will be played for 20 seconds 60times a day <i></td>
+<td><b>Total Cost:</b> <input class="noborder" type="input" name="price" id="price" readonly></td>
+
   </tr>
 </table>
 </div>
         <div class="modal-body">
-          <p>Some text in the modal.</p>
-		  
+          
         </div>
         <div class="modal-footer">
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="postJson()" >Schedule Campaign</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="postJson()" >Schedule Campaign</button>
           </div>
         </div>
       </div>
       
     </div>
-  </div>
+  </div class="modal fade" id="successModal" role="dialog">
   
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <div>
+  </div>
 </div>
 			
 		</div>
-		
-		
-		
-
-
-		
-		
-		
 		<div class="panel panel-default">
 			
 			<div class="panel-heading"><span class="lead">Upload New Document</span></div>
