@@ -45,7 +45,7 @@
 		data:'',
         dataType: 'json',
 		success:function(response){
-			                   for(var i=0;i<response.length;i++)
+							   for(var i=0;i<response.length;i++)
 							   {
 							   $('#location').append($('<option id='+response[i].id+'>'+response[i].devceLocationName+'</option>'));
 							   
@@ -56,6 +56,20 @@
 	
 	
 }
+
+function validateCheckbox() 
+{
+  if ($('input[name=test]:checked').length <= 0)
+  {
+    alert("Please select any one Image/video before proceed...")
+  }
+	else 
+	{	
+		//$('#myModal').modal('data-target="#myModal"');
+		$('#schedule').attr('data-target','#myModal');
+	}
+}
+
 function getDevices() {
 	var e=document.getElementById('location');
     $.ajax({
@@ -63,8 +77,9 @@ function getDevices() {
         type: 'POST',
 		data:'',
         dataType: 'json',
-		success:function(response){		                     							
-                             for(var i=0;i<response.length;i++)
+		success:function(response){		      
+                             $('#devices').empty();
+							 for(var i=0;i<response.length;i++)
 							   {
 							   $('#devices').append($('<option id='+response[i].id+'>'+response[i].deviceLocation.devceLocationName+' - '+response[i].deviceName+' - '+response[i].deviceCategory.category+'</option>'));
 							   //$('#image').html('<img src='+ response[i].deviceImageLocation+' width="42" height="42" />"');
@@ -75,38 +90,93 @@ function getDevices() {
 }
 
 function postJson() {
-	var scdate=document.getElementById('scdate');
-	var edate=document.getElementById('edate');
-	var did=document.getElementById('devices');
-	var price=document.getElementById('price');
-	var deviceIds = $('#devices option:selected').map( function(i,el){
-    var result = [el.id];
-    //result[ el.id ] = $(el).val();
-    return result;	
-}).get();
-	var markers = { "startDate": document.getElementById('scdate').value,"endDate": document.getElementById('edate').value, "deviceId": deviceIds,"contnetId":numbers,"price":price.value};
+	if(document.getElementById("ct").value=="")
+	{
+		alert("Please Choose City")
+	}
+	else if(document.getElementById("location").value=="")
+	{
+		alert("Please Choose Locations")
+	}
+	else if(document.getElementById("devices").value=="")
+	{
+		alert("Please Choose Devices")
+	}
+	else if(document.getElementById("scdate").value=="")
+	{
+		alert("Please Choose Start Date")
+	}
+	else if(document.getElementById("edate").value=="")
+	{
+		alert("Please Choose End Date")
+	}
+    else
+	{
+		var scdate=document.getElementById('scdate');
+		var edate=document.getElementById('edate');
+		var did=document.getElementById('devices');
+		var price=document.getElementById('price');
+		var deviceIds = $('#devices option:selected').map( function(i,el){
+		var result = [el.id];
+		//result[ el.id ] = $(el).val();
+		return result;	
+		}).get();
+		var markers = { "startDate": document.getElementById('scdate').value,"endDate": document.getElementById('edate').value, "deviceId": deviceIds,"contnetId":numbers,"price":price.value};
 
-    $.ajax({
-        url: 'http://localhost:8080/Spring4MVCFileUploadDownloadWithHibernate/saveContents',
-        type: 'POST',
-		contentType:'application/json',
-		data:JSON.stringify(markers),
-        dataType: 'json',
-		success: function(data){$(function(e) {
-   // e.preventDefault();
-    // Coding
-    $('#myModal').modal('toggle'); //or  $('#IDModal').modal('hide');
-	$("#successModal").modal();
-		var mymodal1=$('#successModal');
-    return false;
-});
-		console.log(data);},
-        failure: function(e) {alert("sdfdsf");
-		console.log(data);}
-    });
+		$.ajax({
+			url: 'http://localhost:8080/Spring4MVCFileUploadDownloadWithHibernate/saveContents',
+			type: 'POST',
+			contentType:'application/json',
+			data:JSON.stringify(markers),
+			dataType: 'json',
+			success: function(data)
+			{
+				$(function(e)
+				{
+					alert(response.status)
+					$('#myModal').modal('toggle'); //or  $('#IDModal').modal('hide');
+					$("#successModal").modal();
+					var mymodal1=$('#successModal');
+					return false;
+				});
+				console.log(data);
+			},
+			error: function (response)
+			 {
+				console.log(response);
+				if(response.status==404)
+				{
+					alert("Somthing wrong ... Please try again");
+				}
+			 },
+			failure: function(e) 
+			{
+				alert("sdfdsf");
+				console.log(data);
+				$('#myModal').modal('hide');
+			}
+		});
+		$('#myModal').modal('hide');
+	}
 }
 function getPrice() {
 	var scdate=document.getElementById('scdate');
+if(document.getElementById('scdate').value<gettodaydate())
+	{
+		alert("Please Choose Correct Start date")
+		document.getElementById('scdate').value=gettodaydate();
+	}
+	if(document.getElementById('edate').value<gettodaydate())
+	{
+		alert("Please Choose Correct End date")
+		document.getElementById('edate').value=gettodaydate();
+	}
+	if(document.getElementById('scdate').value>document.getElementById('edate').value)
+	{
+		alert("Start Date should be Greater than End Date")
+		document.getElementById('scdate').value=gettodaydate();
+		document.getElementById('edate').value=gettodaydate();
+	}
 	var edate=document.getElementById('edate');
 	var did=document.getElementById('devices');
 	var deviceIds = $('#devices option:selected').map( function(i,el){
@@ -130,19 +200,29 @@ function getPrice() {
 }
 
 // generic functions
+
 function todaysDate()
 {
-var now = new Date();
-
-var day = ("0" + now.getDate()).slice(-2);
-var month = ("0" + (now.getMonth() + 1)).slice(-2);
-
-var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-
-$('#scdate').val(today);
+	var now = new Date();
+	var day = ("0" + now.getDate()).slice(-2);
+	var month = ("0" + (now.getMonth() + 1)).slice(-2);
+	var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+	var x = parseInt("1");
+	var y = parseInt(day);
+	var tomorrow = now.getFullYear()+"-"+(month)+"-"+(x + y) ;
+	$('#scdate').val(today);
+	$('#edate').val(tomorrow);
 
 }
-      </script>
+function gettodaydate()
+{
+	var now = new Date();
+	var day = ("0" + now.getDate()).slice(-2);
+	var month = ("0" + (now.getMonth() + 1)).slice(-2);
+	var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+	return today;
+}
+</script>
   
     
 </head>
@@ -176,18 +256,20 @@ $('#scdate').val(today);
 							<td><a href="<c:url value='/delete-document-${user.id}-${doc.id}' />" class="btn btn-danger custom-width">delete</a></td>
 						</tr>
 					</c:forEach>
-		    		</tbody>
+					</tbody>
 		    	</table>
 		    </div>
-			
+			 
 			<div class="container">
   
   <!-- Trigger the modal with a button -->
   <div>
-  <button type="button" class="btn btn-info btn-lg" id="myBtn" align="right" onclick="todaysDate();">schedule Campaign</button>
-</div>
+ <div align="right" class="tablecontainer">
+  <button type="button" id="schedule" class="btn btn-info btn-lg" data-toggle="modal" onclick="validateCheckbox();todaysDate();"> schedule Campaign</button>
+<div>
+  </div>
   <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
+  <div class="modal fade" id="myModal" role="dialog" data-refresh="true">
     <div class="modal-dialog modal-lg">
     
       <!-- Modal content-->
@@ -197,6 +279,7 @@ $('#scdate').val(today);
           <h4 class="modal-title">schedule Campaign</h4>
         </div>
 		<div class="tablecontainer">
+		<div class="modal-body">
 		<table cellspacing="10" border="0" width="100%" class="table table-hover">
   <tr>
     <th>City</th>
@@ -204,15 +287,23 @@ $('#scdate').val(today);
 	<th>Devices</th>
   </tr>
   <tr>
-    <td><select id="ct" onChange="sendData();">
-  <option value="Bangalore">BANGALORE</option>
-  <option value="Delhi">DELHI</option>
-  <option value="Haveri">HAVERI</option>
-</select></td>
-<td> <select id="location" onChange="getDevices();">
-</select> </td>
-<td> <select id="devices" multiple></select> </td>
-</tr><tr>
+    <td>
+		<select id="ct" onChange="sendData();">
+		<option value="" disabled selected hidden>Please Choose City</option>
+		<option value="Bangalore">BANGALORE</option>
+		</select>
+	</td>
+	<td> 
+		<select id="location" onChange="getDevices();">
+		<option value="" disabled selected hidden>Please Choose Location</option>
+	    </select>
+	</td>
+	<td> 
+		<select id="devices" multiple>
+		</select>
+	</td>
+	</tr>
+	<tr>
 <td><b>Start Date: </b><input type="date" name="startdate" id="scdate" onChange="getPrice();"></td>
 <td><b>End Date:</b> <input type="date" name="enddate" id="edate" onChange="getPrice();"></td>
 <td></td>
@@ -224,22 +315,18 @@ $('#scdate').val(today);
   </tr>
 </table>
 </div>
-        <div class="modal-body">
+        
           
         </div>
         <div class="modal-footer">
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="postJson()" >Schedule Campaign</button>
+            <button type="button" class="btn btn-primary" onclick="postJson();">Schedule Campaign</button>
           </div>
         </div>
       </div>
       
     </div>
-  </div class="modal fade" id="successModal" role="dialog">
-  
-  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-  <div>
   </div>
 </div>
 			
@@ -284,5 +371,19 @@ $('#scdate').val(today);
 	 		Go to <a href="<c:url value='/list' />">Users List</a>
 	 	</div>
    	</div>
+	
+	<script type="text/javascript">
+        $('#myModal').on('hidden.bs.modal', function () {
+		$('#ct').append('<option value="" disabled selected hidden>Please Choose city</option>');	
+        $('#location').empty();
+		$('#location').append('<option value="" disabled selected hidden>Please Choose Location</option>');
+		$('#devices').empty();
+		//$('#scdate').empty();
+		//$('#edate').empty();
+		document.getElementById('scdate').value="";
+		document.getElementById('edate').value="";
+		document.getElementById('price').value="";
+});
+    </script>
 </body>
 </html>

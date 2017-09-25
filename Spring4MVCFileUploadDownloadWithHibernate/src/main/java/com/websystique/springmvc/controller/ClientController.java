@@ -1,7 +1,5 @@
 package com.websystique.springmvc.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,8 +88,13 @@ public class ClientController {
 		return deviceService.getDevicesByLocation(Integer.parseInt(deviceLocationId));
 	}
 	
+	@RequestMapping(value = "/deviceByLocations", method = RequestMethod.POST,headers="Accept=application/json")
+	public List<Device> getDevicesByLocations(@RequestBody List<Integer> deviceLocationId){
+		return deviceService.getDevicesByLocation(deviceLocationId);
+	}
+	
 	@RequestMapping(value = "/deviceLocation", method = RequestMethod.POST,headers="Accept=application/json")
-	public List<DeviceLocation> getAllDevicesInCity(@RequestParam (name="cityName") String cityName){
+	public List<DeviceLocation> getAllDevicesByLocation(@RequestParam (name="cityName") String cityName){
 		return deviceLocationService.getLocationByCity(cityName);
 	}
 	
@@ -171,7 +174,8 @@ public class ClientController {
 		
 	}
 	
-	private void getSlots(){
+	private void getSlots(String startDate,String endDate){
 		
 	}
+	
 }

@@ -38,5 +38,13 @@ public class DevicesDaoImpl extends AbstractDao<Integer, Device> implements Devi
 		return (List<Device>)query.list();
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Device> getDevicesByLocation(List<Integer> deviceLocationId) {
+		Query query= getSession().createQuery("from Device d INNER JOIN d.deviceLocation where d.deviceLocation.id in :deviceLocationId");
+		 query.setParameterList("deviceLocationId", deviceLocationId);
+		return (List<Device>)query.list();
+	}
 	
 }

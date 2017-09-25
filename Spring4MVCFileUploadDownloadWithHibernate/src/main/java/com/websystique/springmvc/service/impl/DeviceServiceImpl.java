@@ -31,5 +31,10 @@ public class DeviceServiceImpl implements DeviceService{
 	public List<Device> getPrice(ArrayList<Integer> deviceCategory) {
 		return devicesDao.getPrice(deviceCategory);
 	}
+
+	@Override
+	public List<Device> getDevicesByLocation(List<Integer> deviceLocationId) {
+		return devicesDao.getDevicesByLocation(deviceLocationId);
+	}
 	
 }

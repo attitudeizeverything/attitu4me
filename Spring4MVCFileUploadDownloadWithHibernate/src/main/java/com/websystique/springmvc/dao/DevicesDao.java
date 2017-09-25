@@ -13,4 +13,6 @@ public interface DevicesDao {
 	Device findById(int id);
 
 	List<Device> getPrice(ArrayList<Integer> deviceCategory);
+	
+	public List<Device> getDevicesByLocation(List<Integer> deviceLocationId);
 }
