@@ -26,6 +26,18 @@ public class ContentPlayingNowServiceImpl implements ContentPlayingNowService {
 	public void save(ContentPlayingNow contentPlayingNow) {
 		dao.save(contentPlayingNow);
 		
+	}
+
+	@Override
+	public int getTotalSlotsInDay(String date, int deviceId) {
+		if(date.length() > 12)
+			date=date.substring(0, date.indexOf(" "));
+		return dao.getTotalSlotsInDay(date, deviceId);
+	}
+
+	@Override
+	public List<ContentPlayingNow> getContent(int userId) {
+		return dao.getContent(userId);
 	} 
 	
 	

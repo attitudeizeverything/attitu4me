@@ -10,9 +10,9 @@ public interface DevicesDao {
 
 	public List<Device> getDevicesByLocation(int deviceLocationId);
 
-	Device findById(int id);
+	public Device findById(int id);
 
-	List<Device> getPrice(ArrayList<Integer> deviceCategory);
+	public List<Device> getPrice(ArrayList<Integer> deviceCategory);
 	
 	public List<Device> getDevicesByLocation(List<Integer> deviceLocationId);
 }

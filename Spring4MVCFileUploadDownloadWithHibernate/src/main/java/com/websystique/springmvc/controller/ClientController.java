@@ -1,9 +1,14 @@
 package com.websystique.springmvc.controller;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +25,10 @@ import com.websystique.springmvc.model.ContentRequest;
 import com.websystique.springmvc.model.Device;
 import com.websystique.springmvc.model.DeviceCategory;
 import com.websystique.springmvc.model.DeviceLocation;
+import com.websystique.springmvc.model.FullSlots;
 import com.websystique.springmvc.model.PriceRequest;
+import com.websystique.springmvc.model.PriceResponse;
+import com.websystique.springmvc.model.Response;
 import com.websystique.springmvc.model.UserDocument;
 import com.websystique.springmvc.service.ContentPlayingNowService;
 import com.websystique.springmvc.service.DeviceCategoryService;
@@ -98,43 +106,160 @@ public class ClientController {
 		return deviceLocationService.getLocationByCity(cityName);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@RequestMapping(value = "/saveContents", method = RequestMethod.POST,headers="Accept=application/json")
-	public String saveContent(@RequestBody ContentRequest contentRequest){
-		 saveContents(contentRequest);
-		 return "Campaign Details Saved Succeffully!!";
-	}
-	
-	@RequestMapping(value = "/price", method = RequestMethod.POST,headers="Accept=application/json")
-	public Double getPrice(@RequestBody PriceRequest priceRequest){
-		List<Device> category= deviceService.getPrice(priceRequest.getDeviceId()); 
-		double price =0.0d;
-		System.out.println(category.size());
-		for (Device device : category) {
-			  price+=device.getDeviceCategory().getNumberOffTimesPlayed() * device.getDeviceCategory().getSecondsPlayed() * device.getDeviceCategory().getPrice();
+	public Response saveContent(@RequestBody ContentRequest contentRequest){
+		Response response = new Response();
+		String value=getDateAfter1Month(contentRequest.getEndDate());
+		if(contentRequest.getStartDate()==null || contentRequest.getEndDate()==null || contentRequest.getDeviceId()==null){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please select appropriate Dates and Devices.");
 		}
-		return price*getWorkingDaysBetween(priceRequest.getStartDate(), priceRequest.getEndDate());
+		else if(contentRequest.getDeviceId().isEmpty()){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please choose atleast 1 Device(s).");
+		}
+		else if (contentRequest.getStartDate().after(contentRequest.getEndDate())){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please select End date after Start date");
+		}
+		else if(contentRequest.getPrice() <=0){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please select appropriate Dates and Devices. \n Price cannot be '0'(Zero)");
+		}
+		else if(contentRequest.getStartDate().getDate() == (new Date().getDate()) && contentRequest.getStartDate().getMonth() == new Date().getMonth()){
+			response.setResponseCode(400);
+			response.setResponseMessage("Start Date cannot be Today's Date");
+		}
+		else if(!value.equalsIgnoreCase("true"))
+		{
+			response.setResponseCode(400);
+			response.setResponseMessage("Please Schedule campaign before "+value);
+		}
+		else
+		 response=saveContents(contentRequest, response);
+		 return response;
 	}
 	
-	private void saveContents(ContentRequest contentRequest){
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value = "/price", method = RequestMethod.POST,headers="Accept=application/json")
+	public PriceResponse getPrice(@RequestBody PriceRequest priceRequest){
+		PriceResponse response = new PriceResponse();
+		String value=getDateAfter1Month(priceRequest.getEndDate());
+		if(priceRequest.getStartDate()==null || priceRequest.getEndDate()==null || priceRequest.getDeviceId()==null){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please select appropriate Dates and Devices.");
+		}
+		else if(priceRequest.getDeviceId().isEmpty()){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please choose atleast 1 Device(s).");
+		}
+		else if (priceRequest.getStartDate().after(priceRequest.getEndDate())){
+			response.setResponseCode(400);
+			response.setResponseMessage("Please select End date after Start date");
+		}
+		else if(!value.equalsIgnoreCase("true"))
+		{
+			response.setResponseCode(400);
+			response.setResponseMessage("Please Schedule campaign before "+value);
+		}
+		else if(priceRequest.getStartDate().getDate() == (new Date().getDate()) && priceRequest.getStartDate().getMonth() == new Date().getMonth()){
+			response.setResponseCode(400);
+			response.setResponseMessage("Start Date cannot be Today's Date");
+		}
+		else{
+			
+			List<Device> category= deviceService.getPrice(priceRequest.getDeviceId()); 
+			Map<Integer,Double> pricePerDevice = new  HashMap<Integer,Double>();
+			int maxSlotsPerDay=0;
+			double price =0.0d;
+			for (Device device : category) {
+				maxSlotsPerDay=maxAvailableSlotsPerDay(device.getDeviceCategory());
+				pricePerDevice.put(device.getId(), device.getDeviceCategory().getNumberOfTimesPlayed() * device.getDeviceCategory().getSecondsPlayed() * device.getDeviceCategory().getPrice());
+			}
+			FullSlots slots=getSlots(priceRequest.getStartDate(), priceRequest.getEndDate(), priceRequest.getDeviceId(),maxSlotsPerDay);
+			int workingDays=getWorkingDaysBetween(priceRequest.getStartDate(), priceRequest.getEndDate());
+			double freeWorkingDays=0;
+			for (Integer device : priceRequest.getDeviceId()) {
+				if(null != slots.getDateMap() && null != slots.getDateMap().get(device))
+					freeWorkingDays=workingDays-slots.getDateMap().get(device).size();
+				else
+					freeWorkingDays=workingDays;
+				price+=pricePerDevice.get(device)*freeWorkingDays;
+			}
+			if(price <=0 && slots.getDateMap().size()>0){
+				response.setPrice(price);
+				response.setDatesNotAvailable(slots);
+				response.setResponseCode(400);
+				response.setResponseMessage("All Slots for the above devices with dates are Full. \n Please try other dates");
+			}else{
+			response.setPrice(price);
+			response.setDatesNotAvailable(slots);
+			response.setResponseCode(200);
+			response.setResponseMessage("Prices are excluding Weekends and Slots Available between above Dates");
+			}
+		}
+		return response;
+	}
+	
+	private String getDateAfter1Month(Date endDate ){
+		Calendar start= Calendar.getInstance();
+		start.setTime(new Date());
+		Calendar end= Calendar.getInstance();
+		end.setTime(endDate);
+		
+		start.add(Calendar.DATE, 1);
+		start.add(Calendar.MONTH, 1);
+		start.set(Calendar.HOUR, 0);
+		start.set(Calendar.MINUTE, 0);
+		start.set(Calendar.SECOND, 0);
+			if(start.before(end))
+				return start.getTime().toString();
+		return "true";
+	}
+	
+	private Response saveContents(ContentRequest contentRequest, Response response){
 		ContentPlayingNow now ;
+		try {
 		for (Integer deviceId : contentRequest.getDeviceId()) {
-			now = new ContentPlayingNow();
 			Device device = deviceService.findDeviceById(deviceId);
 			UserDocument document = userDocumentService.findById(contentRequest.getContnetId());
-			now.setDelay(slotBetweenCampaign(device.getDeviceCategory()));
-			now.setDelayUnit("SEC");
-			now.setDevice(device);
-			now.setEndTime(contentRequest.getEndDate().toString());
-			now.setStartTime(contentRequest.getStartDate().toString());
-			now.setCampaignPrice(contentRequest.getPrice());
-			now.setUserDocument(document);
-			now.setIsActive(1);
-			now.setIsDeleted(0);
-			now.setGroupId(EncryptUtils.base64encode(contentRequest.getEndDate().toString()+contentRequest.getStartDate().toString()+document.getName()));
-			contentPlayingNowService.save(now);
+			int maxSlotsPerDay=maxAvailableSlotsPerDay(device.getDeviceCategory());
+					FullSlots slots=getSlots(contentRequest.getStartDate(), contentRequest.getEndDate(), contentRequest.getDeviceId(),maxSlotsPerDay);
+					List<String> date=getListOfDaysBetweenTwoDates(contentRequest.getStartDate(), contentRequest.getEndDate());
+				for (String string : date) {
+					if(null != slots.getDateMap() && null != slots.getDateMap().get(deviceId) && slots.getDateMap().get(deviceId).contains(string));
+					//	if(slots.getDateMap().get(deviceId).contains(string))
+							//	System.out.println("NOT AVAILABLE"+string);
+						else{
+							now = new ContentPlayingNow();
+							now.setDelay(getDelay(device.getDeviceCategory()));
+							now.setDelayUnit("SEC");
+							now.setDevice(device);
+							String startTime=setStartTime(device.getDeviceCategory(), string, deviceId);
+							String endTime=getDateFormatter().format(getDateFormatter().parse(startTime).getTime()+30000);
+							now.setEndTime(endTime);
+							now.setStartTime(startTime);
+							now.setCampaignPrice(contentRequest.getPrice());
+							now.setUserDocument(document);
+							now.setIsActive(1);
+							now.setIsDeleted(0);
+							now.setGroupId(EncryptUtils.base64encode(contentRequest.getEndDate().toString()+contentRequest.getStartDate().toString()+document.getName()));
+							contentPlayingNowService.save(now);
+						}
+							}
+				}
+		response.setResponseCode(200);
+		response.setResponseMessage("Inserted Succesfully");
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			response.setResponseCode(401);
+			response.setResponseMessage("Something Went Wrong!! Please try after sometime.");
 		}
+		
+		return response;
 	}
-	
 	private int getWorkingDaysBetween(Date startDate, Date endDate) {
 	    int workingDays = 0;
 	    try
@@ -161,21 +286,93 @@ public class ClientController {
 	    return workingDays;
 	}
 	
-	private int slotBetweenCampaign(DeviceCategory category){
-		return (60/numberOfAdsPerDay(category))*60;
+	/*private int slotBetweenCampaign(DeviceCategory category){
+		return (60/maxAvailableSlotsPerDay(category))*60;
+	}*/
+	
+	private int maxAvailableSlotsPerDay(DeviceCategory category){
+		int secPerDay=category.getWorkingHours()*60*60;
+		return secPerDay/(category.getNumberOfTimesPlayed()*category.getSecondsPlayed());
 	}
 	
-	private int numberOfAdsPerDay(DeviceCategory category){
-		int secPerDay=category.getHours()*60*60;
-		return secPerDay/(category.getNumberOffTimesPlayed()*category.getSecondsPlayed());
+	private String setStartTime(DeviceCategory category, String date,int deviceId ){
+		int count=contentPlayingNowService.getTotalSlotsInDay(date, deviceId);
+		Date d=null;
+		try {
+			 d = getDateFormatter().parse(date);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.HOUR, category.getDayStartHour());
+			cal.add(Calendar.SECOND, (count + 1)* 30);
+			 d=cal.getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getDateFormatter().format(d);
 	}
 	
-	private void setStartTime(DeviceCategory category){
-		
+	private FullSlots getSlots(Date startDate,Date endDate,List<Integer> deviceId, int maxSlot){
+		List<String> dateList = getListOfDaysBetweenTwoDates(startDate, endDate);
+		FullSlots sf = new FullSlots();;
+		 Map<Integer,List<String>> dateMap = new HashMap<Integer,List<String>>();
+		 Map<Integer,String> deviceNameMap = new HashMap<Integer,String>();
+		List<String> datesFull=null;
+		for (Integer device : deviceId) {
+			datesFull=new ArrayList<String>();
+			for (String date : dateList) {
+				int no=contentPlayingNowService.getTotalSlotsInDay(date,device);
+				if(no>2)
+					datesFull.add(date);
+			}
+			
+			if(!datesFull.isEmpty()){
+			dateMap.put(device, datesFull);
+			sf.setDateMap(dateMap);
+			Device devicedetails=deviceService.findDeviceById(device);
+			deviceNameMap.put(device, devicedetails.getDeviceLocation().getDevceLocationName()+" - "+ devicedetails.getDeviceName());
+			sf.setDeviceNameMap(deviceNameMap);
+			}
+		}
+		return sf;
 	}
 	
-	private void getSlots(String startDate,String endDate){
-		
+	private List<String> getListOfDaysBetweenTwoDates(Date startDate, Date endDate)  {
+	    List<String> result = new ArrayList<String>();
+	    Calendar start = Calendar.getInstance();
+	    start.setTime(startDate);
+	    Calendar end = Calendar.getInstance();
+	    end.setTime(endDate);
+	    end.add(Calendar.DAY_OF_YEAR, 1); //Add 1 day to endDate to make sure endDate is included into the final list
+	    while (start.before(end)) {
+	    	 int day = start.get(Calendar.DAY_OF_WEEK);
+		        if ((day != Calendar.SATURDAY) && (day != Calendar.SUNDAY))
+		        		result.add(getDateFormatter().format(start.getTime()));
+	        start.add(Calendar.DAY_OF_YEAR, 1);
+	    }
+	    return result;
 	}
 	
+	public DateFormat getDateFormatter(){
+		return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	}
+	
+	private int getDelay(DeviceCategory category){
+		return maxAvailableSlotsPerDay(category) * category.getSecondsPlayed();
+	}
+public static void main(String[] args) throws ParseException {
+	String date = "22-09-2017 00:00:00";
+	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	Date a=formatter.parse(date);
+	System.out.println(a);
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(a);
+	cal.add(Calendar.SECOND, 60);
+	cal.add(Calendar.MONTH,1);
+	Date d=cal.getTime();
+	System.out.println(formatter.format(d));
+	
+	System.out.println(formatter.format(d.getTime()+30000));
+	
+}
 }

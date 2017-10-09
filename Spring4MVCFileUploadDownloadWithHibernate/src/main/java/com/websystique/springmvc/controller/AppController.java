@@ -2,6 +2,10 @@ package com.websystique.springmvc.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,9 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.websystique.springmvc.model.ContentPlayingNow;
 import com.websystique.springmvc.model.FileBucket;
 import com.websystique.springmvc.model.User;
 import com.websystique.springmvc.model.UserDocument;
+import com.websystique.springmvc.service.ContentPlayingNowService;
 import com.websystique.springmvc.service.UserDocumentService;
 import com.websystique.springmvc.service.UserService;
 import com.websystique.springmvc.util.EncryptUtils;
@@ -47,6 +53,9 @@ public class AppController {
 
 	@Autowired
 	FileValidator fileValidator;
+	
+	@Autowired
+	ContentPlayingNowService contentPlayingNowService;
 	
 	@InitBinder("fileBucket")
 	protected void initBinder(WebDataBinder binder) {
@@ -209,6 +218,15 @@ public class AppController {
 		}
 	}
 	
+	@RequestMapping(value = { "/reports-{userId}" }, method = RequestMethod.GET)
+	public String report(@PathVariable int userId, ModelMap model) throws IOException {
+		//UserDocument document = userDocumentService.findById(docId);
+		List<ContentPlayingNow> documents = contentPlayingNowService.getContent(userId);
+		Collections.sort(documents,new Content());
+		model.addAttribute("documents", documents);
+ 		return "report";
+	}
+	
 	
 	private void saveDocument(FileBucket fileBucket, User user) throws IOException{
 		
@@ -228,4 +246,22 @@ public class AppController {
 		userDocumentService.saveDocument(document);
 	}
 	
+	class Content implements Comparator<ContentPlayingNow>{
+
+		@Override
+		public int compare(ContentPlayingNow arg0, ContentPlayingNow arg1) {
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			int axe=0;
+			try {
+				axe= formatter.parse(arg0.getStartTime()).compareTo(formatter.parse(arg1.getStartTime()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return -axe;
+		}
+		
+		
+		
+	}
 }

@@ -10,4 +10,8 @@ public interface ContentPlayingNowDao {
 	public List<ContentPlayingNow> findByDeviceId(int deviceId);
 	
 	public void save(ContentPlayingNow contentPlayingNow);
+	
+	public int getTotalSlotsInDay(String date,int deviceId);
+	
+	public List<ContentPlayingNow> getContent(int userId);
 }

@@ -28,7 +28,10 @@ public class DeviceCategory {
 	private double price;
 	
 	@Column(name = "WORKING_HOURS")
-	private int hours;
+	private int workingHours;
+	
+	@Column(name = "DAY_START_HOUR")
+	private int dayStartHour;
 	
 	public int getId() {
 		return id;
@@ -48,11 +51,11 @@ public class DeviceCategory {
 	public void setSecondsPlayed(int secondsPlayed) {
 		this.secondsPlayed = secondsPlayed;
 	}
-	public int getNumberOffTimesPlayed() {
+	public int getNumberOfTimesPlayed() {
 		return numberOfTimesPlayed;
 	}
-	public void setNumberOffTimesPlayed(int numberOffTimesPlayed) {
-		this.numberOfTimesPlayed = numberOffTimesPlayed;
+	public void setNumberOfTimesPlayed(int numberOfTimesPlayed) {
+		this.numberOfTimesPlayed = numberOfTimesPlayed;
 	}
 	public double getPrice() {
 		return price;
@@ -60,16 +63,22 @@ public class DeviceCategory {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public int getHours() {
-		return hours;
+	public int getWorkingHours() {
+		return workingHours;
 	}
-	public void setHours(int hours) {
-		this.hours = hours;
+	public void setWorkingHours(int workingHours) {
+		this.workingHours = workingHours;
+	}
+	public int getDayStartHour() {
+		return dayStartHour;
+	}
+	public void setDayStartHour(int dayStartHour) {
+		this.dayStartHour = dayStartHour;
 	}
 	@Override
 	public String toString() {
 		return "DeviceCategory [id=" + id + ", category=" + category + ", secondsPlayed=" + secondsPlayed
-				+ ", numberOfTimesPlayed=" + numberOfTimesPlayed + ", price=" + price + ", hours=" + hours + "]";
+				+ ", numberOfTimesPlayed=" + numberOfTimesPlayed + ", price=" + price + ", hours=" + workingHours + "]";
 	}
 	
 }
